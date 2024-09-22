@@ -1,3 +1,6 @@
+import sys
+ARCHIVO_PARTES = sys.argv[1]
+
 def main():
 
     # una parte
@@ -22,18 +25,21 @@ def main():
     # listaPartes = [(1, 10, 3), (4, 15, 6), (7, 20, 9), (10, 20, 11)]
 
     # partes que ocupan lo mismo + una disjunta
-    listaPartes = [(3, 20, 5), (1, 20, 2), (1, 20, 2),
-                   (3, 20, 5), (3, 20, 5), (2, 15, 4)]
+    #listaPartes = [(3, 20, 5), (1, 20, 2), (1, 20, 2),
+     #              (3, 20, 5), (3, 20, 5), (2, 15, 4)]
 
-    listaPartes = [(3, 20, 5), (1, 20, 2), (1, 20, 3),
+    """
+     listaPartes = [(3, 20, 5), (1, 20, 2), (1, 20, 3),
                    (4, 20, 6), (5, 20, 8), (2, 15, 4),
-                   (1, 20, 2), (1, 20, 8), (0, 20, 7)]
+                   (1, 20, 2), (1, 20, 8), (0, 20, 7)] 
+    """
 
+    lista_partes = leer_archivo_partes(ARCHIVO_PARTES)
     # enunciado
     # listaPartes = [(1, 11, 5), (2, 6, 7), (3, 13, 9),
     #                (12, 7, 16), (14, 3, 25), (19, 18, 22)]
 
-    print("Contorno: ", contorno(listaPartes))
+    print("Contorno: ", contorno(lista_partes))
 
 # ======================= FUNCION RECURSIVA =======================
 
@@ -188,6 +194,15 @@ def alturaDeContorno(contorno, idxContorno, intervalo):
     (_, y) = contorno[idxAuxiliar]
     return y
 
+def leer_archivo_partes(archivo_partes):
+    lista_partes = []
+
+    with open(archivo_partes, 'r') as archivo:
+        for linea in archivo:
+            izquierda, altura, derecha = map(int, linea.strip().split(','))
+            lista_partes.append((izquierda, altura, derecha))
+
+    return lista_partes
 
 if __name__ == "__main__":
     main()
