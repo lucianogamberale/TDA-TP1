@@ -1,0 +1,134 @@
+proyecto -> tiene TAREAS
+las TARAS tienen DEPENDENCIAS con otras, lo cual implica que hay un ORDEN
+entre tareas que se debe cumplir siempre.
+
+la ganancia de cada tarea varía segun el día en que se la realiza
+como dato sabemos cual es la ganancia de cada tarea por cada orden posible
+(es decir que sabemos cuanto vale cada tarea en cada semana)
+
+tenemos que devolver el orden de las tareas con mayor ganancia
+
+primero tengo como dato una lista de tareas
+agarro las tareas que no tienen dependencias con otras, dado que son las unicas que puedo hacer
+
+genero el arbol de estados y por cada semana abro el abanico de chances,
+en donde puedo elegir unas u otras. 
+
+a medida que bajo por una hoja, tengo actualizar mi lista parcial y agregar las 
+nuevas tareas que no tienen dependencias. 
+
+
+# proyecto = [tarea1, tarea2, ..., tareaN]
+# tarea = (id, name, listaIdTareasPredecesoras)
+# cantidadSemanas = tamaño lista tareas
+
+proyecto = [tarea1, tarea2, ..., tareaN]
+
+# posible input
+# proyecto = [ (1, T1, []), (2, T2, []), (3, T3, [3]) ]
+
+tareasPorSemana = []
+ganancia = 0
+numeroSemana = 0
+
+tareasSinPrecedencia = busco en tareas aquellas que tengan la listaIdTareasPredecesoras vacia
+tareasConPrecedencia = busco en tareas aquellas que tengan tareas en listaIdTareasPredecesoras
+
+# estado intermedio
+# tareasSinPrecedencia = [ (1, T1, []), (2, T2, []) ]
+
+mientras hayan tareas en tareasSinPrecedencia:
+
+    tareaElegida = busco la tarea con mejor funcion de costo entre tareasSinPrecedencia
+    gananciaTareaElegida = calcularGanancia(tarea, semana1)
+
+    tareasNuevasAAgregar = busco las tareas de tareasConPrecedencia que dependian de tareaElegida
+    
+    por cada tarea en tareasNuevasAAgregar:
+        le quito la precedencia de la tareaElegida
+        
+        si la tarea tiene la listaIdTareasPredecesoras vacia:
+            agrego tarea a tareasSinPrecedencia
+            quito tarea de tareasConPrecedencia
+
+    calcularGananciaHabiendoElegido(tareaElegida, tareasSinPrecedencia, tareasConPrecedencia)
+
+    por cada tarea en tareasNuevasAAgregar:
+        le agrego la precedencia de la tareaElegida
+
+    quito tarea elegida de tareasSinPrecedencia
+
+
+func calcularGananciaHabiendoElegido(tarea, tareasSinPrecedencia, tareasConPrecedencia)
+
+
+
+===================== 
+OTRA OPCION
+===================== 
+
+# tarea = (id, name, listaIdTareasPredecesoras)
+# proyecto = [tarea1, tarea2, ..., tareaN]
+# proyecto = [ (1, T1, []), (2, T2, []), (3, T3, [3]) ]
+
+func main(proyecto, ganancias)
+
+proyecto = [tarea1, tarea2, ..., tareaN]
+
+global gananciaMaximaActual = 0
+global tareasGanananciaMaximaActual = []
+
+global tareasRealizadas = []
+desde i = 0 a tamaño de proyecto: 
+    agrego false a tareasRealizadas
+
+
+numeroSemana = 0
+
+ganancia = calcularGanancia(numeroSemana, proyecto, 0)
+
+=================
+
+func calcularMaximaGananciaHabiendoElegido(numeroSemana, tareasRestantes, tareasRealizadas, gananciaPrevia):
+
+    si no hay tareasRestantes:
+        retorno 0
+
+    // capaz se podria hacer con un idx nomas
+    tareasPosiblesSemanaActual = tareasRestantes
+
+    mientras haya tareas en tareasPosiblesSemanaActual:
+
+        gananciaActual = gananciaPrevia
+
+        tareaARealizar = busco tarea en tareasPosiblesSemanaActual que me conviene segun funcion costo
+        quito tareaARealizar de tareasPosiblesSemanaActual
+
+        // Funcion de corte: ver si tiene que ir dentro de la recursion o acá
+        por cada id en tareaARealizar.listaIdTareasPredecesoras:
+            si tareasRealizadas[id] = false: 
+                // tengo que buscar nueva tarea porque no están hechas
+                // las predecesoras
+                realizo un continue para saltar a proxima iteración
+
+        gananciaActual += calcularGanancia(tarea, numeroSemana)
+        gananciaSupuesta = funcionCosto()
+
+        // Funcion de corte
+        si gananciaActual + gananciaSupuesta < gananciaMaximaActual
+            // no puedo superar la mejor ganancia
+            retorno 0
+
+        gananciaActual += calcularMaximaGananciaHabiendoElegido(
+            numeroSemana + 1, 
+            tareasRestantes - tareaElegida,
+            tareasRealizadas U tareaElegida,
+            gananciaActual
+        )
+
+        si gananciaMaximaActual < gananciaActual
+            // encontré una ganancia mejor, asi que actualizo
+            gananciaMaximaActual = gananciaActual
+            tareasGanananciaMaximaActual = tareasRealizadas U tareaElegida
+
+        
