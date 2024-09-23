@@ -3,13 +3,13 @@ main:
     tareas las leo del archivo de tareas.txt
     ganancias las leo del archivo ganancias.txt
 
-    estadoTareas = por cada tarea en tareas, genero un elemento con valor falso
-    mejoresGananciasPorSemana = recorro las ganancias y me guardo cual es la mejor ganacia en cada semana
+    estadoTareas = itero las tareas y por cada una agrego un elemento con valor falso a una lista vacia
+    mejoresGananciasPorSemana = calcularMejoresGananciasPorSemana()
 
     gananciaMaxima = 0
     ordenTareasGananciaMaxima = []
 
-    calcularMaximaGanancia(0, 0, lista vacia)
+    calcularMaximaGanancia(0, 0, [])
 
 //============== FUNCIÓN PRINCIPAL ==============//
 
@@ -56,6 +56,17 @@ func calcularMaximaGanancia(nroSemana, gananciaPrevia, ordenTareasRealizadas):
         marco tarea con idTarea como no realizada en estadoTareas
         quito tarea con idTarea en ordenTareasRealizadas
 
+func calcularMejoresGananciasPorSemana: 
+    
+    // me salteo el id del la tarea
+    desde i = 1 hasta tamaño ganancias + 1
+        gananciaMaxima = 0
+        desde j = 0 hasta el tamaño de ganancias
+            si gananciaMaxima < ganancias[j][i]:
+                gananciaMaxima = ganancias[j][i]
+        agrego a mejoresGananciasPorSemana el valor gananciaMaxima
+
+
 //============== ESTADOS DESCENDIENTES ==============// 
 
 func obtenerTareasNoRealizadas:
@@ -68,6 +79,7 @@ func obtenerTareasNoRealizadas:
             agrego a tareasNoRealizadas el idTarea 
     
     retorno tareasNoRealizadas
+
 
 //============== PROPIEDAD CORTE ==============// 
 
@@ -83,6 +95,7 @@ func todasTareasPreviasRealizadas(idTarea):
             retorno falso
 
     retorno verdadero
+
 
 //============== FUNCION COSTO ==============// 
 
@@ -108,6 +121,7 @@ func calcularProyeccionMaximaGananciaPosible(nroSemana):
         gananciaOptima += mejoresGananciasPorSemana[i]
         
     retorno gananciaOptima
+
 
 //============== ESTADO PROXIMO ==============// 
 
