@@ -1,120 +1,145 @@
 tareas = []
 ganancias = []
 
+estadoTareas = []
 mejoresGananciasPorSemana = []
 
-gananciaMaximaActual = 0
-tareasGanananciaMaximaActual = []
+gananciaMaxima = 0
+ordenTareasGananciaMaxima = []
 
 def main():
-    
-    global tareas
-    global ganancias
-    
-    global mejoresGananciasPorSemana
         
-    # leo las ganancias
-    ganancias = []
-    # ganancias.append([1, 10])
-    ganancias.append([1, 10, 1, 1])
-    ganancias.append([2, 1, 20, 1])
-    ganancias.append([3, 50, 1, 1])
-    
     # leo las tareas
+    global tareas
     # tareas = [ (1, 'T1', []) ]
-    tareas = [ (1, 'T1', []), (2, 'T2', []), (3, 'T3', [2]) ]
+    # tareas = [ 
+    #     (1, 'T1', []), 
+    #     (2, 'T2', []), 
+    #     (3, 'T3', []) 
+    # ]
+    tareas = [ 
+        (1, 'T1', []), 
+        (2, 'T2', [1]), 
+        (3, 'T3', []),
+        (4, 'T4', [2]),
+        (5, 'T5', [2, 3]),
+        (6, 'T6', []),
+        (7, 'T7', [5])
+    ]
     
-    # hay que calcularlo bien después
-    # mejoresGananciasPorSemana = [10]
-    mejoresGananciasPorSemana = [50, 20, 1]
+    # leo las ganancias
+    global ganancias
+    ganancias = [
+        [1,10,5,8,2,4,6,6],
+        [2,12,12,10,5,4,7,9],
+        [3,1,5,8,9,9,10,12],
+        [4,4,5,2,8,15,20,10],
+        [5,12,12,10,5,4,7,9],
+        [6,1,2,3,4,3,2,1],
+        [7,30,10,12,5,15,10,5]
+    ]
+    # ganancias.append([1, 10])
+    # ganancias.append([1, 10, 10, 40])
+    # ganancias.append([2, 50, 10, 1])
+    # ganancias.append([3, 30, 20, 30])
     
-    # cada posición simboliza si una tarea fue realizada
-    estadoTareas = []
+    proyecto()
+
+# ======================= FUNCION PPAL =======================
+
+def proyecto():
+    
+    inicializarMejoresGananciasPorSemana()
+    inicializarEstadoTareas()
+    
+    nroSemana = 0
+    gananciaPrevia = 0
+    ordenTareasRealizadas = []   
+    
+    calcularMaximaGanancia(nroSemana, gananciaPrevia, ordenTareasRealizadas)
+    
+    print("================= RESULTADO =================")
+    print("Ganancia máxima: ", gananciaMaxima)
+    print("Tareas realizadas: ", ordenTareasGananciaMaxima)
+    print("=============================================")
+    
+# ======================= INICIALIZAR =======================
+
+def inicializarEstadoTareas():
+    global tareas
+    global estadoTareas
+    
     for _ in tareas:
         estadoTareas.append(False)
-    
-    calcularMaximaGanancia(0, estadoTareas, [], 0)
-    
-    print("====================================")
-    print("Ganancia máxima: ", gananciaMaximaActual)
-    print("Tareas realizadas: ", tareasGanananciaMaximaActual)
 
+def inicializarMejoresGananciasPorSemana():
+    global ganancias
+    global mejoresGananciasPorSemana
+        
+    for i in range(1, len(ganancias) + 1):
+        gananciaMaxima = 0
+        for j in range(0, len(ganancias)):
+            if gananciaMaxima < ganancias[j][i]:
+                gananciaMaxima = ganancias[j][i]
+        mejoresGananciasPorSemana.append(gananciaMaxima)
 
 # ======================= BACKTRACKING =======================
 
-# backtracking
-def calcularMaximaGanancia(nroSemana, estadoTareas, tareasRealizadas, gananciaActual):
+# funcion backtracking
+def calcularMaximaGanancia(nroSemana, gananciaPrevia, ordenTareasRealizadas):
     global tareas
     
-    global gananciaMaximaActual
-    global tareasGanananciaMaximaActual
-    
-    
+    global gananciaMaxima
+    global ordenTareasGananciaMaxima
+        
     # estadosDescendientes
-    estadosDescendientes = obtenerTareasNoRealizadas(estadoTareas)
+    tareasNoRealizadas = obtenerTareasNoRealizadas()
     
     # descendientes
-    descendientes = []
-    for idTarea in estadosDescendientes:
+    tareasNoRealizadasAExplorar = []
+    for idTarea in tareasNoRealizadas:
         # propiedad de corte
-        if todasTareasPreviasRealizadas(tareas[idTarea - 1], estadoTareas):
+        if todasTareasPreviasRealizadas(idTarea):
             # funcion costo
-            ganancia = funcionCosto(nroSemana, idTarea, gananciaActual)
-            descendientes.append((idTarea, ganancia, False))
+            gananciaEstimada = calcularMaximaGananciaPosible(nroSemana, idTarea, gananciaPrevia)
+            tareasNoRealizadasAExplorar.append((idTarea, gananciaEstimada, False))
     
-    descendientesExplorados = 0
+    cantidadTareasExploradas = 0
     # mientras existan estados descendientes no explorados
-    while descendientesExplorados < len(descendientes):
+    while cantidadTareasExploradas < len(tareasNoRealizadasAExplorar):
         
         # estadoProximo con mayor fc
-        idxDescendiente = buscarIdDescendienteConMayorFc(descendientes)
-        descendientesExplorados +=1
+        idxDescendiente = buscarIdxTareaNoRealizadaConMayorFc(tareasNoRealizadasAExplorar)
+        cantidadTareasExploradas +=1
         
         # marco al descendiente como visitado
-        (idTarea, ganancia, _) = descendientes[idxDescendiente]
-        descendientes[idxDescendiente] = (idTarea, ganancia, True)
+        (idTarea, gananciaEstimada, _) = tareasNoRealizadasAExplorar[idxDescendiente]
+        tareasNoRealizadasAExplorar[idxDescendiente] = (idTarea, gananciaEstimada, True)
         
-        print("Semana: ", nroSemana, ". Tarea: ", idTarea)
-
-        # marco la tarea como realizada
-        estadoTareas[idTarea - 1] = True
-        tareasRealizadas.append(idTarea)
+        marcarTareaComoRealizada(idTarea, ordenTareasRealizadas)
         
         # si fc es de estadoProximo es mayor a la mejor solucion obtenida
-        if gananciaMaximaActual < ganancia:
+        if gananciaMaxima < gananciaEstimada:
             # si es solucion
-            if (len(tareas) == len(tareasRealizadas)) and (gananciaMaximaActual < ganancia):
-                print("Actualizo solución")
-                print("Tareas realizadas: ", tareasRealizadas)
-                print("Ganancia: ", ganancia)
-                gananciaMaximaActual = ganancia
-                tareasGanananciaMaximaActual = tareasRealizadas.copy()
+            if (len(tareas) == len(ordenTareasRealizadas)) and (gananciaMaxima < gananciaEstimada):
+                gananciaMaxima = gananciaEstimada
+                ordenTareasGananciaMaxima = ordenTareasRealizadas.copy()
             
-            calcularMaximaGanancia(nroSemana + 1, estadoTareas, tareasRealizadas, gananciaActual)
+            gananciaTarea = calcularGananciaTarea(nroSemana, idTarea)
+            calcularMaximaGanancia(
+                nroSemana + 1,
+                gananciaPrevia + gananciaTarea,
+                ordenTareasRealizadas
+            )
             
-        # desmarco la tarea como realizada
-        estadoTareas[idTarea - 1] = False
-        # ver una forma optima de hacer esto
-        tareasRealizadas.pop()
-            
-            
-def buscarIdDescendienteConMayorFc(descendientes):
-    idDescendienteConMayorFc = 0
-    maxFc = descendientes[0][1]
-    
-    for i in range(1, len(descendientes)):
-        (tarea, fc, visitado) = descendientes[i]
-        if visitado:
-            continue
-        if (not visitado) and maxFc < fc:
-            idDescendienteConMayorFc = i
-    
-    return idDescendienteConMayorFc
+        marcarTareaComoNoRealizada(idTarea, ordenTareasRealizadas)
+
 
 # ======================= ESTADOS DESCENDIENTES =======================
 
-def obtenerTareasNoRealizadas(estadoTareas):
+def obtenerTareasNoRealizadas():
     global tareas
+    global estadoTareas
     
     tareasNoRealizadas = []
     
@@ -127,9 +152,11 @@ def obtenerTareasNoRealizadas(estadoTareas):
 
 # ======================= PROPIEDAD CORTE =======================
 
-def todasTareasPreviasRealizadas(tarea, estadoTareas):
+def todasTareasPreviasRealizadas(idTarea):
+    global tareas
+    global estadoTareas
     
-    tareasPrevias = tarea[2]
+    tareasPrevias = tareas[idTarea - 1][2]
     
     if len(tareasPrevias) == 0:
         return True
@@ -142,19 +169,20 @@ def todasTareasPreviasRealizadas(tarea, estadoTareas):
 
 # ======================= FUNCION COSTO =======================
 
-def funcionCosto(nroSemana, idTarea, gananciaActual):
+def calcularMaximaGananciaPosible(nroSemana, idTarea, gananciaPrevia):
     
+    gananciaActual = gananciaPrevia
     gananciaActual += calcularGananciaTarea(nroSemana, idTarea)
-    proyeccionGananciaOptima = calcularOptimaGanancia(nroSemana)
+    gananciaProyectada = calcularProyeccionMaximaGananciaPosible(nroSemana)
     
-    return gananciaActual + proyeccionGananciaOptima
+    return gananciaActual + gananciaProyectada
 
 def calcularGananciaTarea(nroSemana, idTarea):
     global ganancias
     
     return ganancias[idTarea - 1][nroSemana + 1]
 
-def calcularOptimaGanancia(nroSemana):
+def calcularProyeccionMaximaGananciaPosible(nroSemana):
     global mejoresGananciasPorSemana
     
     gananciaOptima = 0
@@ -163,6 +191,36 @@ def calcularOptimaGanancia(nroSemana):
         gananciaOptima += mejoresGananciasPorSemana[i]
     
     return gananciaOptima    
+   
+# ======================= ESTADO PROXIMO =======================
+
+def buscarIdxTareaNoRealizadaConMayorFc(tareasNoRealizadasAExplorar):
+    idxMaxFc = -1
+    maxFc = 0
     
+    for i in range(0, len(tareasNoRealizadasAExplorar)):
+        (_, fc, visitado) = tareasNoRealizadasAExplorar[i]
+        if visitado:
+            continue
+        if (not visitado) and maxFc < fc:
+            idxMaxFc = i
+    
+    return idxMaxFc
+
+# ======================= AUXILIARES =======================
+
+def marcarTareaComoRealizada(idTarea, ordenTareasRealizadas):
+    global estadoTareas
+
+    estadoTareas[idTarea - 1] = True
+    ordenTareasRealizadas.append(idTarea)
+    
+def marcarTareaComoNoRealizada(idTarea, ordenTareasRealizadas):
+    global estadoTareas
+    
+    estadoTareas[idTarea - 1] = False
+    ordenTareasRealizadas.pop()
+
+
 if __name__ == "__main__":
     main()
