@@ -1,3 +1,8 @@
+import sys
+
+ARCHIVO_TAREAS = sys.argv[1]
+ARCHIVO_GANANCIAS = sys.argv[2]
+
 tareas = []
 ganancias = []
 
@@ -8,40 +13,9 @@ gananciaMaxima = 0
 ordenTareasGananciaMaxima = []
 
 def main():
-        
-    # leo las tareas
-    global tareas
-    # tareas = [ (1, 'T1', []) ]
-    # tareas = [ 
-    #     (1, 'T1', []), 
-    #     (2, 'T2', []), 
-    #     (3, 'T3', []) 
-    # ]
-    tareas = [ 
-        (1, 'T1', []), 
-        (2, 'T2', [1]), 
-        (3, 'T3', []),
-        (4, 'T4', [2]),
-        (5, 'T5', [2, 3]),
-        (6, 'T6', []),
-        (7, 'T7', [5])
-    ]
     
-    # leo las ganancias
-    global ganancias
-    ganancias = [
-        [1,10,5,8,2,4,6,6],
-        [2,12,12,10,5,4,7,9],
-        [3,1,5,8,9,9,10,12],
-        [4,4,5,2,8,15,20,10],
-        [5,12,12,10,5,4,7,9],
-        [6,1,2,3,4,3,2,1],
-        [7,30,10,12,5,15,10,5]
-    ]
-    # ganancias.append([1, 10])
-    # ganancias.append([1, 10, 10, 40])
-    # ganancias.append([2, 50, 10, 1])
-    # ganancias.append([3, 30, 20, 30])
+    leerArchivoTareas(ARCHIVO_TAREAS)
+    leerArchivoGanancias(ARCHIVO_GANANCIAS)
     
     proyecto()
 
@@ -58,11 +32,40 @@ def proyecto():
     
     calcularMaximaGanancia(nroSemana, gananciaPrevia, ordenTareasRealizadas)
     
-    print("================= RESULTADO =================")
     print("Ganancia máxima: ", gananciaMaxima)
-    print("Tareas realizadas: ", ordenTareasGananciaMaxima)
-    print("=============================================")
+    print("Orden de tareas: ", ordenTareasGananciaMaxima)
     
+# ======================= LECTURA ARCHIVOS =======================    
+
+def leerArchivoTareas(nombreArchivo):
+    global tareas
+
+    with open(nombreArchivo, 'r') as file:
+        for line in file:
+            partes = line.strip().split(',') 
+            idTarea = int(partes[0])          
+            nombreTarea = partes[1].strip() 
+            
+            if len(partes) > 2:           
+                listaTareasPrevias = [int(x) for x in partes[2:]] 
+            else:
+                listaTareasPrevias = []
+
+            tarea = (idTarea, nombreTarea, listaTareasPrevias)  
+            tareas.append(tarea)  
+
+    return tareas
+
+def leerArchivoGanancias(nombreArchivo):
+    global ganancias
+
+    with open(nombreArchivo, 'r') as file:
+        for line in file:
+            numeros = [int(x) for x in line.strip().split(',')]
+            ganancias.append(numeros)
+
+    return ganancias
+
 # ======================= INICIALIZAR =======================
 
 def inicializarEstadoTareas():
@@ -220,7 +223,6 @@ def marcarTareaComoNoRealizada(idTarea, ordenTareasRealizadas):
     
     estadoTareas[idTarea - 1] = False
     ordenTareasRealizadas.pop()
-
 
 if __name__ == "__main__":
     main()
