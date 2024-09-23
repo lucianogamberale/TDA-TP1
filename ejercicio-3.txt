@@ -1,17 +1,11 @@
-Input
-Pieza 1: (1, 11, 5), (2, 6, 7), (3, 13, 9), (12, 7, 16) , (14, 3, 25), (19,18,22) 
+main: 
 
-Resultado
-Contorno: (1,11),(3,13),(9,0),(12,7),(16,3),(19,18),(22,3),(25,0)
+    listaPartes las leo del archivo de partes.txt
+    
+    contorno(listaPartes)
 
-// la idea es partir la lista de puntos en dos y aplicar nuevamente merge_contornos a las mitades que quedaron
-// el caso base será cuando me quede un elemento, el cual lo tengo que transformar en contorno y devolverlo,
-// luego a los distintos contornos los tengo que ir mergeando.
 
-// entonces tengo una etapa en donde tengo una pieza, conformada por partes
-// a esta lista de partes es mi input
-
-//============== FUNCIÓN PRINCIPAL ==============// 
+//============== FUNCIÓN PRINCIPAL ==============//
 
 func generarContornoAPartirDePartes(listaPartes):
 
@@ -49,7 +43,7 @@ func mergeContornos(contorno1, contorno2):
     idxContorno2 = 0
     idxContorno1 = 0
     
-    contornoId = contornoConCoordenadaMasALaIzq(contorno1, idxContorno1, contorno2, idxContorno2)
+    contornoId = idContornoConMenorCoordenadaX(contorno1, idxContorno1, contorno2, idxContorno2)
     si contornoId = 1
         coordenadaIzq = contorno1[idxContorno1]
         idxContorno1 += 1
@@ -59,9 +53,9 @@ func mergeContornos(contorno1, contorno2):
 
     coordenadaActualIzquierda = coordenadaIzq.x
 
-    mientras (idxContorno1 <= tamaño de contorno1 ó idxContorno2 <= tamaño de contorno2):
+    mientras (idxContorno1 < tamaño de contorno1 ó idxContorno2 < tamaño de contorno2):
 
-        contornoId = contornoConCoordenadaMasALaIzq(contorno1, idxContorno1, contorno2, idxContorno2)
+        contornoId = idContornoConMenorCoordenadaX(contorno1, idxContorno1, contorno2, idxContorno2)
         si contornoId = 1
             coordenadaIzq = contorno1[idxContorno1]
             idxContorno1 += 1
@@ -71,6 +65,8 @@ func mergeContornos(contorno1, contorno2):
 
         x1 = coordenadaActualIzquierda
         x2 = coordenadaIzq.x
+        coordenadaActualIzquierda = x2
+        
         intervalo = (x1, x2)
 
         alturaMaxima = alturaMaxima(contorno1, idxContorno1, contorno2, idxContorno2, intervalo)
@@ -80,14 +76,13 @@ func mergeContornos(contorno1, contorno2):
         sino si el último elemento del tiene una altura distinta a alturaMaxima:
             agrego a contorno el valor (x1, alturaMaxima)
         
-        coordenadaActualIzquierda = x2
     
     agrego a contorno el valor (coordenadaActualIzquierda, 0)
 
     retorno contorno
 
 
-func contornoConCoordenadaMasALaIzq(contorno1, idxContorno1, contorno2, idxContorno2):
+func idContornoConMenorCoordenadaX(contorno1, idxContorno1, contorno2, idxContorno2):
 
     si tamaño de contorno1 <= idxContorno1 + 1:
         // me quede sin elementos por recorrer
@@ -111,29 +106,43 @@ func alturaMaxima(contorno1, idxContorno1, contorno2, idxContorno2, intervalo):
 
 
 func alturaDeContorno(contorno, idxContorno, intervalo):
-    
-    idxContornoAux = idxContorno
 
-    si intervalo.x2 <= contorno[idxContornoAux].x:
-        idxContornoAux = idxContornoAux - 1
-        si idxContornoAux < 0:
-            // todavía no empezó el contorno
-            retorno 0
+    // considero al intervalo cerrado a la izquierda y abierto a la derecha
+    // [x1, x2)
 
-    retorno contorno[idxContornoAux].y
+    // para saber la altura del contorno, tengo que saber que un
+    // intervalo puede haber sido generado por:
+    // - una coordenada de cada contorno
+    // - dos coordenadas del mismo contorno
 
+    // caso 1: una coordenada de cada contorno
+    idxAuxiliar = idxContorno - 1
+    si idxAuxiliar < 0:
+        retorno 0
+    si contorno[idxAuxiliar].x <= intervalo.x1:
+        return contorno[idxAuxiliar].y
 
-func alturaDeContorno(contorno, idxContorno, intervalo):
-    
-    idxContornoAux = idxContorno - 2
+    // caso 2: dos coordenadas del mismo contorno
+    idxAuxiliar = idxContorno - 2
+    si idxAuxiliar < 0:
+        return 0
+    return contorno[idxAuxiliar].y
 
-    si intervalo.x1 <= contorno[idxContornoAux].x:
-        idxContornoAux = idxContornoAux - 1
-        si idxContornoAux < 0:
-            // todavía no empezó el contorno
-            retorno 0
+//============== COMENTARIOS A BORRAR ==============// 
 
-    retorno contorno[idxContornoAux].y
+Input
+Pieza 1: (1, 11, 5), (2, 6, 7), (3, 13, 9), (12, 7, 16) , (14, 3, 25), (19,18,22) 
+
+Resultado
+Contorno: (1,11),(3,13),(9,0),(12,7),(16,3),(19,18),(22,3),(25,0)
+
+// la idea es partir la lista de puntos en dos y aplicar nuevamente merge_contornos a las mitades que quedaron
+// el caso base será cuando me quede un elemento, el cual lo tengo que transformar en contorno y devolverlo,
+// luego a los distintos contornos los tengo que ir mergeando.
+
+// entonces tengo una etapa en donde tengo una pieza, conformada por partes
+// a esta lista de partes es mi input
+
 
 Ejemplo para chequear altura en cada contorno
 

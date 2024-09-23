@@ -1,134 +1,124 @@
-proyecto -> tiene TAREAS
-las TARAS tienen DEPENDENCIAS con otras, lo cual implica que hay un ORDEN
-entre tareas que se debe cumplir siempre.
+main: 
 
-la ganancia de cada tarea varía segun el día en que se la realiza
-como dato sabemos cual es la ganancia de cada tarea por cada orden posible
-(es decir que sabemos cuanto vale cada tarea en cada semana)
+    tareas las leo del archivo de tareas.txt
+    ganancias las leo del archivo ganancias.txt
 
-tenemos que devolver el orden de las tareas con mayor ganancia
+    estadoTareas = por cada tarea en tareas, genero un elemento con valor falso
+    mejoresGananciasPorSemana = recorro las ganancias y me guardo cual es la mejor ganacia en cada semana
 
-primero tengo como dato una lista de tareas
-agarro las tareas que no tienen dependencias con otras, dado que son las unicas que puedo hacer
+    gananciaMaxima = 0
+    ordenTareasGananciaMaxima = []
 
-genero el arbol de estados y por cada semana abro el abanico de chances,
-en donde puedo elegir unas u otras. 
+    calcularMaximaGanancia(0, 0, lista vacia)
 
-a medida que bajo por una hoja, tengo actualizar mi lista parcial y agregar las 
-nuevas tareas que no tienen dependencias. 
+//============== FUNCIÓN PRINCIPAL ==============//
 
-
-# proyecto = [tarea1, tarea2, ..., tareaN]
-# tarea = (id, name, listaIdTareasPredecesoras)
-# cantidadSemanas = tamaño lista tareas
-
-proyecto = [tarea1, tarea2, ..., tareaN]
-
-# posible input
-# proyecto = [ (1, T1, []), (2, T2, []), (3, T3, [3]) ]
-
-tareasPorSemana = []
-ganancia = 0
-numeroSemana = 0
-
-tareasSinPrecedencia = busco en tareas aquellas que tengan la listaIdTareasPredecesoras vacia
-tareasConPrecedencia = busco en tareas aquellas que tengan tareas en listaIdTareasPredecesoras
-
-# estado intermedio
-# tareasSinPrecedencia = [ (1, T1, []), (2, T2, []) ]
-
-mientras hayan tareas en tareasSinPrecedencia:
-
-    tareaElegida = busco la tarea con mejor funcion de costo entre tareasSinPrecedencia
-    gananciaTareaElegida = calcularGanancia(tarea, semana1)
-
-    tareasNuevasAAgregar = busco las tareas de tareasConPrecedencia que dependian de tareaElegida
+// funcion backtracking
+func calcularMaximaGanancia(nroSemana, gananciaPrevia, ordenTareasRealizadas):
+           
+    // estadosDescendientes
+    tareasNoRealizadas = obtenerTareasNoRealizadas()
     
-    por cada tarea en tareasNuevasAAgregar:
-        le quito la precedencia de la tareaElegida
+    // descendientes
+    tareasNoRealizadasAExplorar = []
+    por cada idTarea de tareasNoRealizadas:
+        // propiedad de corte
+        if todasTareasPreviasRealizadas(idTarea):
+            // funcion costo
+            gananciaEstimada = calcularMaximaGananciaPosible(nroSemana, idTarea, gananciaPrevia)
+            agrego a idTarea y gananciaEstimada a tareasNoRealizadasAExplorar
+    
+    cantidadTareasExploradas = 0
+    // mientras existan estados descendientes no explorados
+    mientras la cantidadTareasExploradas sea menor al tamaño de tareasNoRealizadasAExplorar
         
-        si la tarea tiene la listaIdTareasPredecesoras vacia:
-            agrego tarea a tareasSinPrecedencia
-            quito tarea de tareasConPrecedencia
-
-    calcularGananciaHabiendoElegido(tareaElegida, tareasSinPrecedencia, tareasConPrecedencia)
-
-    por cada tarea en tareasNuevasAAgregar:
-        le agrego la precedencia de la tareaElegida
-
-    quito tarea elegida de tareasSinPrecedencia
-
-
-func calcularGananciaHabiendoElegido(tarea, tareasSinPrecedencia, tareasConPrecedencia)
-
-
-
-===================== 
-OTRA OPCION
-===================== 
-
-# tarea = (id, name, listaIdTareasPredecesoras)
-# proyecto = [tarea1, tarea2, ..., tareaN]
-# proyecto = [ (1, T1, []), (2, T2, []), (3, T3, [3]) ]
-
-func main(proyecto, ganancias)
-
-proyecto = [tarea1, tarea2, ..., tareaN]
-
-global gananciaMaximaActual = 0
-global tareasGanananciaMaximaActual = []
-
-global tareasRealizadas = []
-desde i = 0 a tamaño de proyecto: 
-    agrego false a tareasRealizadas
-
-
-numeroSemana = 0
-
-ganancia = calcularGanancia(numeroSemana, proyecto, 0)
-
-=================
-
-func calcularMaximaGananciaHabiendoElegido(numeroSemana, tareasRestantes, tareasRealizadas, gananciaPrevia):
-
-    si no hay tareasRestantes:
-        retorno 0
-
-    // capaz se podria hacer con un idx nomas
-    tareasPosiblesSemanaActual = tareasRestantes
-
-    mientras haya tareas en tareasPosiblesSemanaActual:
-
-        gananciaActual = gananciaPrevia
-
-        tareaARealizar = busco tarea en tareasPosiblesSemanaActual que me conviene segun funcion costo
-        quito tareaARealizar de tareasPosiblesSemanaActual
-
-        // Funcion de corte: ver si tiene que ir dentro de la recursion o acá
-        por cada id en tareaARealizar.listaIdTareasPredecesoras:
-            si tareasRealizadas[id] = false: 
-                // tengo que buscar nueva tarea porque no están hechas
-                // las predecesoras
-                realizo un continue para saltar a proxima iteración
-
-        gananciaActual += calcularGanancia(tarea, numeroSemana)
-        gananciaSupuesta = funcionCosto()
-
-        // Funcion de corte
-        si gananciaActual + gananciaSupuesta < gananciaMaximaActual
-            // no puedo superar la mejor ganancia
-            retorno 0
-
-        gananciaActual += calcularMaximaGananciaHabiendoElegido(
-            numeroSemana + 1, 
-            tareasRestantes - tareaElegida,
-            tareasRealizadas U tareaElegida,
-            gananciaActual
-        )
-
-        si gananciaMaximaActual < gananciaActual
-            // encontré una ganancia mejor, asi que actualizo
-            gananciaMaximaActual = gananciaActual
-            tareasGanananciaMaximaActual = tareasRealizadas U tareaElegida
-
+        // estadoProximo con mayor fc
+        idxDescendiente = buscarIdxTareaNoRealizadaConMayorFc(tareasNoRealizadasAExplorar)
+        aumento el contador de cantidadTareasExploradas
+        gananciaEstimada = ganancia estimada que saco de tareasNoRealizadasAExplorar con indice idxDescendiente
         
+        // marco al descendiente como visitado
+        marco como explorada a la tarea que esta en idxDescendiente de tareasNoRealizadasAExplorar
+        
+        marco tarea con idTarea como realizada en estadoTareas
+        agrego tarea con idTarea en ordenTareasRealizadas
+        
+        // si fc es de estadoProximo es mayor a la mejor solucion obtenida
+        si la gananciaMaxima es mayor a la gananciaEstimada:
+            // si es solucion
+            si el ordenTareasRealizadas tiene el mismo tamaño que tareas y la gananciaMaxima es mayor a la gananciaEstimada:
+                gananciaMaxima = gananciaEstimada
+                ordenTareasGananciaMaxima = ordenTareasRealizadas
+            
+            gananciaTarea = calcularGananciaTarea(nroSemana, idTarea)
+            calcularMaximaGanancia(nroSemana + 1, gananciaPrevia + gananciaTarea, ordenTareasRealizadas)
+            
+        marco tarea con idTarea como no realizada en estadoTareas
+        quito tarea con idTarea en ordenTareasRealizadas
+
+//============== ESTADOS DESCENDIENTES ==============// 
+
+func obtenerTareasNoRealizadas:
+    
+    tareasNoRealizadas = []
+    
+    por cada tarea de tareas
+        idTarea = extraigo el id de tarea
+        if not estadoTareas[idTarea - 1]:
+            agrego a tareasNoRealizadas el idTarea 
+    
+    retorno tareasNoRealizadas
+
+//============== PROPIEDAD CORTE ==============// 
+
+func todasTareasPreviasRealizadas(idTarea):
+    
+    tareasPrevias = extrigo las tareas previas de la tarea con idTarea de tareas
+    
+    si no tiene tareasPrevias:
+        retorno verdadero
+        
+    por cada tarea de las tareasPrevias:
+        si la tarea no fue realizada:
+            retorno falso
+
+    retorno verdadero
+
+//============== FUNCION COSTO ==============// 
+
+func calcularMaximaGananciaPosible(nroSemana, idTarea, gananciaPrevia):
+    
+    gananciaActual = gananciaPrevia
+    gananciaActual += calcularGananciaTarea(nroSemana, idTarea)
+    gananciaProyectada = calcularProyeccionMaximaGananciaPosible(nroSemana)
+    
+    retorno gananciaActual + gananciaProyectada
+
+
+func calcularGananciaTarea(nroSemana, idTarea):
+    
+    retorno ganancias[idTarea - 1][nroSemana + 1]
+
+
+func calcularProyeccionMaximaGananciaPosible(nroSemana):
+        
+    gananciaOptima = 0
+
+    desde i = nroSemana+1 hasta el tamaño de mejoresGananciasPorSemana:
+        gananciaOptima += mejoresGananciasPorSemana[i]
+        
+    retorno gananciaOptima
+
+//============== ESTADO PROXIMO ==============// 
+
+func buscarIdxTareaNoRealizadaConMayorFc(tareasNoRealizadasAExplorar):
+    idxMaxFc = -1
+    maxFc = 0
+    
+    por cada tarea de tareasNoRealizadasAExplorar:
+        si la tarea fue explorada:
+            salto a proxima iteracion
+        si la tarea no fue visitada y maxFc < fc:
+            idxMaxFc = i
+    
+    retorno idxMaxFc

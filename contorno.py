@@ -3,8 +3,8 @@ ARCHIVO_PARTES = sys.argv[1]
 
 def main():
 
-    lista_partes = leerArchivoPartes(ARCHIVO_PARTES)
-    print("Contorno: ", contorno(lista_partes))
+    listaPartes = leerArchivoPartes(ARCHIVO_PARTES)
+    print("Contorno: ", contorno(listaPartes))
 
 # ======================= LECTURA ARCHIVOS =======================
 
