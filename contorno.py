@@ -6,6 +6,7 @@ def main():
     listaPartes = leerArchivoPartes(ARCHIVO_PARTES)
     print("Contorno: ", contorno(listaPartes))
 
+
 # ======================= LECTURA ARCHIVOS =======================
 
 def leerArchivoPartes(nombreArchivo):
