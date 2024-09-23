@@ -12,6 +12,7 @@ mejoresGananciasPorSemana = []
 gananciaMaxima = 0
 ordenTareasGananciaMaxima = []
 
+
 def main():
     
     leerArchivoTareas(ARCHIVO_TAREAS)
@@ -35,6 +36,7 @@ def proyecto():
     print("Ganancia máxima: ", gananciaMaxima)
     print("Orden de tareas: ", ordenTareasGananciaMaxima)
     
+
 # ======================= LECTURA ARCHIVOS =======================    
 
 def leerArchivoTareas(nombreArchivo):
@@ -56,6 +58,7 @@ def leerArchivoTareas(nombreArchivo):
 
     return tareas
 
+
 def leerArchivoGanancias(nombreArchivo):
     global ganancias
 
@@ -66,6 +69,7 @@ def leerArchivoGanancias(nombreArchivo):
 
     return ganancias
 
+
 # ======================= INICIALIZAR =======================
 
 def inicializarEstadoTareas():
@@ -74,6 +78,7 @@ def inicializarEstadoTareas():
     
     for _ in tareas:
         estadoTareas.append(False)
+
 
 def inicializarMejoresGananciasPorSemana():
     global ganancias
@@ -85,6 +90,7 @@ def inicializarMejoresGananciasPorSemana():
             if gananciaMaxima < ganancias[j][i]:
                 gananciaMaxima = ganancias[j][i]
         mejoresGananciasPorSemana.append(gananciaMaxima)
+
 
 # ======================= BACKTRACKING =======================
 
@@ -153,6 +159,7 @@ def obtenerTareasNoRealizadas():
     
     return tareasNoRealizadas
 
+
 # ======================= PROPIEDAD CORTE =======================
 
 def todasTareasPreviasRealizadas(idTarea):
@@ -170,6 +177,7 @@ def todasTareasPreviasRealizadas(idTarea):
         
     return True
 
+
 # ======================= FUNCION COSTO =======================
 
 def calcularMaximaGananciaPosible(nroSemana, idTarea, gananciaPrevia):
@@ -180,10 +188,12 @@ def calcularMaximaGananciaPosible(nroSemana, idTarea, gananciaPrevia):
     
     return gananciaActual + gananciaProyectada
 
+
 def calcularGananciaTarea(nroSemana, idTarea):
     global ganancias
     
     return ganancias[idTarea - 1][nroSemana + 1]
+
 
 def calcularProyeccionMaximaGananciaPosible(nroSemana):
     global mejoresGananciasPorSemana
@@ -194,6 +204,7 @@ def calcularProyeccionMaximaGananciaPosible(nroSemana):
         gananciaOptima += mejoresGananciasPorSemana[i]
     
     return gananciaOptima    
+   
    
 # ======================= ESTADO PROXIMO =======================
 
@@ -210,6 +221,7 @@ def buscarIdxTareaNoRealizadaConMayorFc(tareasNoRealizadasAExplorar):
     
     return idxMaxFc
 
+
 # ======================= AUXILIARES =======================
 
 def marcarTareaComoRealizada(idTarea, ordenTareasRealizadas):
@@ -218,11 +230,13 @@ def marcarTareaComoRealizada(idTarea, ordenTareasRealizadas):
     estadoTareas[idTarea - 1] = True
     ordenTareasRealizadas.append(idTarea)
     
+    
 def marcarTareaComoNoRealizada(idTarea, ordenTareasRealizadas):
     global estadoTareas
     
     estadoTareas[idTarea - 1] = False
     ordenTareasRealizadas.pop()
+
 
 if __name__ == "__main__":
     main()

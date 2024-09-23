@@ -18,10 +18,12 @@ def leerArchivoPartes(nombreArchivo):
 
     return lista_partes
 
+
 # ======================= FUNCION RECURSIVA =======================
 
 def contorno(listaPartes):
     return generarContornoAPartirDePartes(listaPartes, 0, len(listaPartes))
+
 
 def generarContornoAPartirDePartes(listaPartes, inicio, fin):
 
@@ -33,6 +35,7 @@ def generarContornoAPartirDePartes(listaPartes, inicio, fin):
     contorno2 = generarContornoAPartirDePartes(listaPartes, medio, fin)
 
     return mergeContornos(contorno1, contorno2)
+
 
 # ======================= FUNCIONES AUXILIARES =======================
 
@@ -167,6 +170,7 @@ def alturaDeContorno(contorno, idxContorno, intervalo):
         return 0
     (_, y) = contorno[idxAuxiliar]
     return y
+
 
 if __name__ == "__main__":
     main()
