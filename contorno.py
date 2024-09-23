@@ -3,15 +3,25 @@ ARCHIVO_PARTES = sys.argv[1]
 
 def main():
 
-    lista_partes = leer_archivo_partes(ARCHIVO_PARTES)
+    lista_partes = leerArchivoPartes(ARCHIVO_PARTES)
     print("Contorno: ", contorno(lista_partes))
+
+# ======================= LECTURA ARCHIVOS =======================
+
+def leerArchivoPartes(nombreArchivo):
+    lista_partes = []
+
+    with open(nombreArchivo, 'r') as archivo:
+        for linea in archivo:
+            (x1, y, x2) = map(int, linea.strip().split(','))
+            lista_partes.append((x1, y, x2))
+
+    return lista_partes
 
 # ======================= FUNCION RECURSIVA =======================
 
-
 def contorno(listaPartes):
     return generarContornoAPartirDePartes(listaPartes, 0, len(listaPartes))
-
 
 def generarContornoAPartirDePartes(listaPartes, inicio, fin):
 
@@ -25,7 +35,6 @@ def generarContornoAPartirDePartes(listaPartes, inicio, fin):
     return mergeContornos(contorno1, contorno2)
 
 # ======================= FUNCIONES AUXILIARES =======================
-
 
 def construirUnContorno(parte):
 
@@ -158,16 +167,6 @@ def alturaDeContorno(contorno, idxContorno, intervalo):
         return 0
     (_, y) = contorno[idxAuxiliar]
     return y
-
-def leer_archivo_partes(archivo_partes):
-    lista_partes = []
-
-    with open(archivo_partes, 'r') as archivo:
-        for linea in archivo:
-            izquierda, altura, derecha = map(int, linea.strip().split(','))
-            lista_partes.append((izquierda, altura, derecha))
-
-    return lista_partes
 
 if __name__ == "__main__":
     main()
